@@ -68,7 +68,7 @@ http://localhost:8001
 - 隔离性
 - 轻量级虚拟机
 - 共用一个Linux内核
-- 硬件资源占用较小
+- 硬件资源占用较小
 
 1、安装docker
 ```
@@ -100,7 +100,7 @@ https://www.daocloud.io/mirror#accelerator-doc
 # docker network create --subnet=172.18.0.0/16 net1
 ```
 
-4、创建5个数据卷。由于通过映射宿主机的目录到容器中时，PXC无法方式正常启动。这里使用docker volume来创建数据卷
+4、创建5个数据卷。由于通过映射宿主机目录到容器中时，PXC无法方式正常启动。这里使用docker volume来创建数据卷
 ```
 # docker volume create v1
 # docker volume create v2
@@ -117,15 +117,18 @@ https://www.daocloud.io/mirror#accelerator-doc
 6、创建5节点的PXC集群。注意，每个pxc容器创建之后，因为要执行PXC的初始化和加入集群等工作，耐心等待1分钟左右，再用客户端连接MySQL。另外，必须等第一个MySQL节点启动成功，用MySQL客户端能连接上之后，再去创建其他MySQL节点。
 
 ```
-# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 -v v1:/var/lib/mysql -v backup:/data --privileged --name=node1 --net=net1 --ip 172.18.0.2 pxc
-
-# docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v2:/var/lib/mysql -v backup:/data --privileged --name=node2 --net=net1 --ip 172.18.0.3 pxc
-
-# docker run -d -p 3308:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v3:/var/lib/mysql --privileged --name=node3 --net=net1 --ip 172.18.0.4 pxc
-
-# docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v4:/var/lib/mysql --privileged --name=node4 --net=net1 --ip 172.18.0.5 pxc
-
-# docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v5:/var/lib/mysql -v backup:/data --privileged --name=node5 --net=net1 --ip 172.18.0.6 pxc
+# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
+    -v v1:/var/lib/mysql -v backup:/data --privileged --name=node1 --net=net1 --ip 172.18.0.2 pxc
+# docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
+    -e CLUSTER_JOIN=node1 -v v2:/var/lib/mysql -v backup:/data --privileged --name=node2 \
+    --net=net1 --ip 172.18.0.3 pxc
+# docker run -d -p 3308:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
+    -e CLUSTER_JOIN=node1 -v v3:/var/lib/mysql --privileged --name=node3 --net=net1 --ip 172.18.0.4 pxc
+# docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
+    -e CLUSTER_JOIN=node1 -v v4:/var/lib/mysql --privileged --name=node4 --net=net1 --ip 172.18.0.5 pxc
+# docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
+    -e CLUSTER_JOIN=node1 -v v5:/var/lib/mysql -v backup:/data --privileged --name=node5 --net=net1 \
+    --ip 172.18.0.6 pxc
 ```
 
 7、下载haproxy镜像
@@ -205,26 +208,16 @@ https://www.daocloud.io/mirror#accelerator-doc
 create user 'haproxy'@'%' identified by '';
 ```
 
-9、创建两个Haproxy容器
-
-创建第1个Haproxy负载均衡服务器
+9、创建两个haproxy容器，并启动服务
 ```
-# docker run -it -d -p 4001:8888 -p 4002:3306 -v /home/soft/haproxy:/usr/local/etc/haproxy --name h1 --privileged --net=net1 --ip 172.18.0.7 haproxy
-```
-
-进入h1容器，启动Haproxy
-```
+# docker run -it -d -p 4001:8888 -p 4002:3306 -v /home/soft/haproxy:/usr/local/etc/haproxy \
+    --name h1 --privileged --net=net1 --ip 172.18.0.7 haproxy
 # docker exec -it h1 bash
 # haproxy -f /usr/local/etc/haproxy/haproxy.cfg
 ```
-
-创建第2个Haproxy负载均衡服务器
 ```
-# docker run -it -d -p 4003:8888 -p 4004:3306 -v /home/soft/haproxy:/usr/local/etc/haproxy --name h2 --privileged --net=net1 --ip 172.18.0.8 haproxy
-```
-
-进入h2容器，启动Haproxy
-```
+# docker run -it -d -p 4003:8888 -p 4004:3306 -v /home/soft/haproxy:/usr/local/etc/haproxy \
+    --name h2 --privileged --net=net1 --ip 172.18.0.8 haproxy
 # docker exec -it h2 bash
 # haproxy -f /usr/local/etc/haproxy/haproxy.cfg
 ```
@@ -308,7 +301,6 @@ innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/201
 
 重新创建其余4个节点，组建PXC集群
 
-
 ## 部署RedisCluster集群
 
 高速缓存
@@ -343,49 +335,32 @@ innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/201
 ```
 
 4、启动6个实例的redis服务
-
-进入r1节点
 ```
 docker exec -it r1 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src
 ./redis-server ../redis.conf
-```
 
-进入r2节点
-```
 docker exec -it r2 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src
 ./redis-server ../redis.conf
-```
 
-进入r3节点
-```
 docker exec -it r3 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src
 ./redis-server ../redis.conf
-```
 
-进入r4节点
-```
 docker exec -it r4 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src
 ./redis-server ../redis.conf
-```
 
-进入r5节点
-```
 docker exec -it r5 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src
 ./redis-server ../redis.conf
-```
 
-进入r6节点
-```
 docker exec -it r6 bash
 cp /home/redis/redis.conf /usr/redis/redis.conf
 cd /usr/redis/src

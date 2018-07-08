@@ -387,7 +387,7 @@ cd ../cluster
 
 ## 打包部署后端项目
 
-1、进入人人开源后端项目，执行打包（分别修改配置文件，更改端口，打包三次生成三个JAR文件）
+1、进入人人开源后端项目，修改配置文件，执行打包
 ```
 # mvn clean install -Dmaven.test.skip=true
 
@@ -469,7 +469,7 @@ http://192.168.135.202:6201/renren-fast/swagger/index.html
 
 ## 打包部署前端项目
 
-修改npm源
+修改npm源（可选）
 
 http://npm.taobao.org/
 
@@ -482,22 +482,30 @@ http://npm.taobao.org/
 
 3、创建3节点的Nginx实例，部署前端项目
 ```
-docker run -it -d --name fn1 -v /home/fn1/nginx.conf:/etc/nginx/nginx.conf -v /home/fn1/renren-vue:/home/fn1/renren-vue --privileged --net=host nginx
-docker run -it -d --name fn2 -v /home/fn2/nginx.conf:/etc/nginx/nginx.conf -v /home/fn2/renren-vue:/home/fn2/renren-vue --privileged --net=host nginx
-docker run -it -d --name fn3 -v /home/fn3/nginx.conf:/etc/nginx/nginx.conf -v /home/fn3/renren-vue:/home/fn3/renren-vue --privileged --net=host nginx
+docker run -it -d --name fn1 -v /home/fn1/nginx.conf:/etc/nginx/nginx.conf \
+    -v /home/fn1/renren-vue:/home/fn1/renren-vue --privileged --net=host nginx
+docker run -it -d --name fn2 -v /home/fn2/nginx.conf:/etc/nginx/nginx.conf \
+    -v /home/fn2/renren-vue:/home/fn2/renren-vue --privileged --net=host nginx
+docker run -it -d --name fn3 -v /home/fn3/nginx.conf:/etc/nginx/nginx.conf \
+    -v /home/fn3/renren-vue:/home/fn3/renren-vue --privileged --net=host nginx
 ```
 
 http://192.168.135.170:6501
+
 http://192.168.135.170:6502
+
 http://192.168.135.170:6503
 
 4、配置负载均衡
 ```
-docker run -it -d --name ff1 -v /home/ff1/nginx.conf:/etc/nginx/nginx.conf --net=host --privileged nginx
-docker run -it -d --name ff2 -v /home/ff2/nginx.conf:/etc/nginx/nginx.conf --net=host --privileged nginx
+docker run -it -d --name ff1 -v /home/ff1/nginx.conf:/etc/nginx/nginx.conf \
+    --net=host --privileged nginx
+docker run -it -d --name ff2 -v /home/ff2/nginx.conf:/etc/nginx/nginx.conf \
+    --net=host --privileged nginx
 ```
 
 http://192.168.135.170:6601
+
 http://192.168.135.170:6602
 
 5、配置高可用

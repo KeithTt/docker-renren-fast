@@ -286,17 +286,17 @@ a# pt-get install percona-xtrabackup-24
 
 node1容器中删除MySQL的数据
 ```
-rm -rf /var/lib/mysql/*
+# rm -rf /var/lib/mysql/*
 ```
 
 清空事务
 ```
-innobackupex --user=root --password=abc123456 --apply-back /data/backup/full/2018-04-15_05-09-07/
+# innobackupex --user=root --password=abc123456 --apply-back /data/backup/full/2018-04-15_05-09-07/
 ```
 
 还原数据
 ```
-innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/2018-04-15_05-09-07/
+# innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/2018-04-15_05-09-07/
 ```
 
 重新创建其余4个节点，组建PXC集群
@@ -319,7 +319,7 @@ innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/201
 # docker pull yyyyttttwwww/redis
 ```
 
-2、创建net2网段
+2、创建net2网络
 ```
 # docker network create --subnet=172.19.0.0/16 net2
 ```
@@ -336,48 +336,48 @@ innobackupex --user=root --password=abc123456 --copy-back  /data/backup/full/201
 
 4、启动6个实例的redis服务
 ```
-docker exec -it r1 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r1 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 
-docker exec -it r2 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r2 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 
-docker exec -it r3 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r3 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 
-docker exec -it r4 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r4 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 
-docker exec -it r5 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r5 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 
-docker exec -it r6 bash
-cp /home/redis/redis.conf /usr/redis/redis.conf
-cd /usr/redis/src
-./redis-server ../redis.conf
+# docker exec -it r6 bash
+# cp /home/redis/redis.conf /usr/redis/redis.conf
+# cd /usr/redis/src
+# ./redis-server ../redis.conf
 ```
 
 5、创建Cluster集群
-
-在r1节点上
 ```
-cd /usr/redis/src
-mkdir -p ../cluster
-cp redis-trib.rb ../cluster/
-cd ../cluster
+在r1节点上
+
+# cd /usr/redis/src
+# mkdir -p ../cluster
+# cp redis-trib.rb ../cluster/
+# cd ../cluster
 
 创建Cluster集群
-./redis-trib.rb create --replicas 1 172.19.0.2:6379 172.19.0.3:6379 172.19.0.4:6379 172.19.0.5:6379 172.19.0.6:6379 172.19.0.7:6379
+# ./redis-trib.rb create --replicas 1 172.19.0.2:6379 172.19.0.3:6379 172.19.0.4:6379 172.19.0.5:6379 172.19.0.6:6379 172.19.0.7:6379
 
 # redis-cli -c
 > cluster nodes
@@ -415,22 +415,22 @@ cluster:
 
 3、创建3节点Java容器
 ```
-docker volume create j1
-docker run -it -d --name j1 -v j1:/home/soft --net=host java
-docker exec -it j1 bash
-nohup java -jar /home/soft/renren-fast.jar &
+# docker volume create j1
+# docker run -it -d --name j1 -v j1:/home/soft --net=host java
+# docker exec -it j1 bash
+# nohup java -jar /home/soft/renren-fast.jar &
 ```
 ```
-docker volume create j2
-docker run -it -d --name j2 -v j2:/home/soft --net=host java
-docker exec -it j2 bash
-nohup java -jar /home/soft/renren-fast.jar &
+# docker volume create j2
+# docker run -it -d --name j2 -v j2:/home/soft --net=host java
+# docker exec -it j2 bash
+# nohup java -jar /home/soft/renren-fast.jar &
 ```
 ```
-docker volume create j3
-docker run -it -d --name j3 -v j3:/home/soft --net=host java
-docker exec -it j3 bash
-nohup java -jar /home/soft/renren-fast.jar &
+# docker volume create j3
+# docker run -it -d --name j3 -v j3:/home/soft --net=host java
+# docker exec -it j3 bash
+# nohup java -jar /home/soft/renren-fast.jar &
 ```
 
 尝试访问后端API服务
@@ -482,11 +482,11 @@ http://npm.taobao.org/
 
 3、创建3节点的Nginx实例，部署前端项目
 ```
-docker run -it -d --name fn1 -v /home/fn1/nginx.conf:/etc/nginx/nginx.conf \
+# docker run -it -d --name fn1 -v /home/fn1/nginx.conf:/etc/nginx/nginx.conf \
     -v /home/fn1/renren-vue:/home/fn1/renren-vue --privileged --net=host nginx
-docker run -it -d --name fn2 -v /home/fn2/nginx.conf:/etc/nginx/nginx.conf \
+# docker run -it -d --name fn2 -v /home/fn2/nginx.conf:/etc/nginx/nginx.conf \
     -v /home/fn2/renren-vue:/home/fn2/renren-vue --privileged --net=host nginx
-docker run -it -d --name fn3 -v /home/fn3/nginx.conf:/etc/nginx/nginx.conf \
+# docker run -it -d --name fn3 -v /home/fn3/nginx.conf:/etc/nginx/nginx.conf \
     -v /home/fn3/renren-vue:/home/fn3/renren-vue --privileged --net=host nginx
 ```
 
@@ -498,9 +498,9 @@ http://192.168.135.170:6503
 
 4、配置负载均衡
 ```
-docker run -it -d --name ff1 -v /home/ff1/nginx.conf:/etc/nginx/nginx.conf \
+# docker run -it -d --name ff1 -v /home/ff1/nginx.conf:/etc/nginx/nginx.conf \
     --net=host --privileged nginx
-docker run -it -d --name ff2 -v /home/ff2/nginx.conf:/etc/nginx/nginx.conf \
+# docker run -it -d --name ff2 -v /home/ff2/nginx.conf:/etc/nginx/nginx.conf \
     --net=host --privileged nginx
 ```
 
@@ -510,18 +510,18 @@ http://192.168.135.170:6602
 
 5、配置高可用
 ```
-docker exec -it ff1 bash
-apt-get update
-apt-get install vim keepalived
-vim /etc/keepalived/keepalived.conf
-service keepalived start
+# docker exec -it ff1 bash
+# apt-get update
+# apt-get install vim keepalived
+# vim /etc/keepalived/keepalived.conf
+# service keepalived start
 ```
 ```
-docker exec -it ff2 bash
-apt-get update
-apt-get install vim keepalived
-vim /etc/keepalived/keepalived.conf
-service keepalived start
+# docker exec -it ff2 bash
+# apt-get update
+# apt-get install vim keepalived
+# vim /etc/keepalived/keepalived.conf
+# service keepalived start
 ```
 
 http://192.168.135.203:6701
@@ -589,7 +589,7 @@ OPTIONS='-H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock'
 a、manager节点需要先降级为worker
 # docker node demote
 
-b、退出集群，worker节点上直接leave即可
+b、退出集群，worker节点上直接leave即可
 # docker swarm leave
 
 在manager节点上可以强行退出，不过仅限于集群将不再使用的情况

@@ -1,4 +1,4 @@
-## Win环境部署和测试前后端程序
+## 本地Win环境部署和测试前后端程序
 
 1、[下载maven](http://maven.apache.org/download.cgi)并解压
 

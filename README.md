@@ -117,18 +117,25 @@ https://www.daocloud.io/mirror#accelerator-doc
 6、创建5节点的PXC集群。注意，每个pxc容器创建之后，因为要执行PXC的初始化和加入集群等工作，耐心等待1分钟左右，再用客户端连接MySQL。另外，必须等第一个MySQL节点启动成功，用MySQL客户端能连接上之后，再去创建其他MySQL节点。
 
 ```
-# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
-    -v v1:/var/lib/mysql -v backup:/data --privileged --name=node1 --net=net1 --ip 172.18.0.2 pxc
-# docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
-    -e CLUSTER_JOIN=node1 -v v2:/var/lib/mysql -v backup:/data --privileged --name=node2 \
-    --net=net1 --ip 172.18.0.3 pxc
-# docker run -d -p 3308:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
-    -e CLUSTER_JOIN=node1 -v v3:/var/lib/mysql --privileged --name=node3 --net=net1 --ip 172.18.0.4 pxc
-# docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
-    -e CLUSTER_JOIN=node1 -v v4:/var/lib/mysql --privileged --name=node4 --net=net1 --ip 172.18.0.5 pxc
-# docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC -e XTRABACKUP_PASSWORD=abc123456 \
-    -e CLUSTER_JOIN=node1 -v v5:/var/lib/mysql -v backup:/data --privileged --name=node5 --net=net1 \
-    --ip 172.18.0.6 pxc
+# docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC \
+    -e XTRABACKUP_PASSWORD=abc123456 -v v1:/var/lib/mysql -v backup:/data --privileged \
+    --name=node1 --net=net1 --ip 172.18.0.2 pxc
+
+# docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC \
+    -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v2:/var/lib/mysql \
+    -v backup:/data --privileged --name=node2 --net=net1 --ip 172.18.0.3 pxc
+
+# docker run -d -p 3308:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC \
+    -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v3:/var/lib/mysql \
+    --privileged --name=node3 --net=net1 --ip 172.18.0.4 pxc
+
+# docker run -d -p 3309:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC \
+    -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v4:/var/lib/mysql \
+    --privileged --name=node4 --net=net1 --ip 172.18.0.5 pxc
+
+# docker run -d -p 3310:3306 -e MYSQL_ROOT_PASSWORD=abc123456 -e CLUSTER_NAME=PXC \
+    -e XTRABACKUP_PASSWORD=abc123456 -e CLUSTER_JOIN=node1 -v v5:/var/lib/mysql \
+    -v backup:/data --privileged --name=node5 --net=net1 --ip 172.18.0.6 pxc
 ```
 
 7、下载haproxy镜像
@@ -319,7 +326,7 @@ node1容器中删除MySQL的数据
 # docker pull yyyyttttwwww/redis
 ```
 
-2、创建net2网络
+2、创建net2网络
 ```
 # docker network create --subnet=172.19.0.0/16 net2
 ```

@@ -1,18 +1,17 @@
-# 《Docker环境下的前后端分离部署与运维》
-
-## windows环境部署和测试前后端程序
+## Win环境部署和测试前后端程序
 
 1、[下载maven](http://maven.apache.org/download.cgi)并解压
 
 2、设置环境变量PATH
 
-3、修改conf/settings.xml文件，设置jar包存放目录（可选）`<localRepository>D:\maven-repo</localRepository>`
+3、修改conf/settings.xml文件，设置jar包存放目录（可选）
 
-4、安装Java，设置JAVA_HOME，这里必须要设置，不然mvn构建的时候会找不到JDK
+`<localRepository>D:\maven-repo</localRepository>`
 
-https://www.cnblogs.com/boringwind/p/8001300.html
+4、安装Java，[设置JAVA_HOME](https://www.cnblogs.com/boringwind/p/8001300.html)，这里必须要设置，不然mvn构建的时候会找不到JDK
 
 5、下载安装eclipse，设置maven的配置文件路径
+
 `Window -> Preferences -> Maven -> User Settings`
 
 6、[下载renren-fast](http://www.renren.io/)项目，将项目导入到eclipse
@@ -30,7 +29,9 @@ https://www.cnblogs.com/boringwind/p/8001300.html
 
 11、在datagrip创建一个schema命名为renren_fast，然后在renren_fast上创建一个console，将刚才复制的sql内容粘贴到console上，全选并执行
 
-12、给eclipse安装sts插件 `Help -> Eclipse Marketplace`
+12、给eclipse安装sts插件
+
+`Help -> Eclipse Marketplace`
 
 13、在eclipse上修改数据库连接信息，用springboot app运行工程，这样后端工程就启动了
 
@@ -47,6 +48,7 @@ http://localhost:8080/renren-fast/swagger/index.html
 
 17、进入前端项目目录，安装依赖包
 ```
+# cd renren-fast-vue/
 # npm install
 ```
 
